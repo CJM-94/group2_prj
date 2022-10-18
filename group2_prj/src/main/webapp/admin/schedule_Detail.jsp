@@ -94,6 +94,7 @@ System.out.println(  aschDAO.selectScheduleDetail(schId) );
                                         </div> 
                                         <div class="dataTable-top"></div>
                                         <div class="row">
+                                       
                                        		 <input type="hidden" name="zschId" id="zschId" value=<%=schData.getSchId()%>>
                                             <div class="col-2"><b>공연코드</b></div> <div class="col-6"><input type="text" id="showId" name="showId" class="dataTable-input" 
                                             value="<%=schData.getShowId() %>" readonly="readonly"></div>

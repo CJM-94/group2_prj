@@ -30,7 +30,7 @@ public class ScheduleDAO {
 	
 	//캘린더
 	
-	public List<ScheduleShowVO> selectSchedule(String showId) throws SQLException{
+	public List<ScheduleShowVO> selectSchedule() throws SQLException{
 		List<ScheduleShowVO> list = new ArrayList<ScheduleShowVO>();
 	
 		
