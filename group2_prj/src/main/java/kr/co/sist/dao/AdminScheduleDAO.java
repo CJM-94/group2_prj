@@ -275,7 +275,7 @@ public class AdminScheduleDAO {
 					pstmt.setString(3, aschVO.getSchTime());
 					
 					
-					i = pstmt.executeUpdate();
+					i = pstmt.executeUpdate(" select concat('sch_',lpad(schedule_seq.nextval,6,0)) from dual ");
 
 			}finally {
 				

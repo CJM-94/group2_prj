@@ -1,83 +1,96 @@
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.HashMap"%>
-<%@page import="java.util.List"%>
-<%@page import="kr.co.sist.dao.ScheduleDAO"%>
 <%@page import="kr.co.sist.vo.ScheduleShowVO"%>
 <%@page import="java.util.GregorianCalendar"%>
 <%@page import="java.util.Calendar"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" info=" Calendar 만들기 "%>
-    
-    
-    
-<%
-  request.setCharacterEncoding("UTF-8");
-  String showId = request.getParameter("showId");
-  String name = request.getParameter("name");
-  String startDate = request.getParameter("startDate");
-  String endDate = request.getParameter("endDate");
- 
-/* 
- ScheduleDAO sDAO = ScheduleDAO.getInstance();
- List<ScheduleShowVO> list=sDAO.selectSchedule(showId); */
+<%@page import="kr.co.sist.dao.ScheduleDAO"%>
+<%@page import="java.util.List"%>
 
- HashMap map = new HashMap();
- 
- ArrayList list = new ArrayList(); //DB에서 가져온 목록이라고 생각하세요.
- HashMap map = new HashMap();  //DB에서 가져온 목록중 1개의 로우 (모델) 이라고 생각하세요. 
- map.put("START_DATE",20100305);  //첫번째 로우값에 시작일 대입
- map.put("END_DATE",20100306);  //첫번째 로우값에 종료일 대입
- map.put("CONTENT","청소");  //첫번째 로우값에 내용 추가
- list.add(map);   //목록에 추가
- map = new HashMap();
- map.put("START_DATE",20100315);  //두번째 로우값에 시작일 대입
- map.put("END_DATE",20100316);  //두번째 로우값에 종료일 대입
- map.put("CONTENT","청소");  //두번째 로우값에 내용 추가
- list.add(map); 
- map = new HashMap();
- map.put("START_DATE",20100318);  //세번째 로우값에 시작일 대입
- map.put("END_DATE",20100319);  //세번째 로우값에 종료일 대입
- map.put("CONTENT","청소");  //세번째 로우값에 내용 추가
- list.add(map); 
- map = new HashMap();
- map.put("START_DATE",20100325);  //네번째 로우값에 시작일 대입
- map.put("END_DATE",20100326);  //네번째 로우값에 종료일 대입
- map.put("CONTENT","청소");  //네번째 로우값에 내용 추가
- list.add(map);   
- map = new HashMap();
- map.put("START_DATE",20100329);  //네번째 로우값에 시작일 대입
- map.put("END_DATE",20100330);  //네번째 로우값에 종료일 대입
- map.put("CONTENT","청소");  //네번째 로우값에 내용 추가
- list.add(map);  
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" info=" DB값 가져와서 Calendar 만들기 "%>
     
-//날짜  JSP
- int year;
- int month;
- Calendar today=Calendar.getInstance();
- Calendar cal = new GregorianCalendar();
- year = (request.getParameter("year")==null) ?  today.get(Calendar.YEAR) :      Integer.parseInt(request.getParameter("year").trim()) ;
- month = (request.getParameter("month")==null) ?   today.get(Calendar.MONTH)+1:      Integer.parseInt(request.getParameter("month").trim()) ;
- if (month <= 0){
-  month = 12;
-   year  = ( year - 1 );
- } else if (month >= 13) {
- 
-   month = 1;
-   year = ( year + 1 );
- }
- cal.set(Calendar.YEAR,year);
- cal.set(Calendar.MONTH,(month-1));
- cal.set(Calendar.DATE,1);
+<!-- DB값 조회 -->
+ <% 
+ request.setCharacterEncoding("UTF-8");
+ String showId = request.getParameter("showId");
+ ScheduleDAO schDAO = ScheduleDAO.getInstance();
+ //공연코드
+  List<ScheduleShowVO> list = schDAO.selectSchedule(); 
+  for(int i=0; i < list.size(); i++){
+	
+		System.out.println(list.get(i).toString()); 
+
+
+  }
+ %>
  
  
-   
- %>  
-<!DOCTYPE HTML>
-<!--
-	Dopetrope by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
+ <!--  
+ 
+ 
+달력에서 년,월,일이 나오니까 
+1. 년,월을 입력 받는 method를 작성하고 
+2. 받은 년,월 을 사용해서 1일부터 마지막 날까지 조회합니다. 
+3. 조회한 결과는 Map을 써도 좋고, 이차원 배열을 사용해도 좋습니다. 
+  단 조회 결과는 VO에 저장되어있어야 합니다. 
+Map<String,List<Vo> 이렇던가 
+VO[][] voArr=new Vo[31][];으로 합니다. 
+
+배열로 하는게 편할꺼에요. 
+
+4. 일자별로 조회된 공연 정보를  생성해서 배열에 넣고
+
+5. 배열을 반환합니다. 
+
+6.jsp에서 결과를 받아 날짜를 돌릴때 방의 값을 가져와서 값이 있다면 뿌려줍니다. 
+
+ 
+ 
+ -->
+ 
+ <%
+
+ 
+ 
+ 
+ 
+ %>
+ 
+ 
+ 
+ <%
+ //JSP 날짜 구하기
+ 
+	Calendar cal = Calendar.getInstance();
+	
+	// 시스템 오늘날짜
+	int ty = cal.get(Calendar.YEAR);
+	int tm = cal.get(Calendar.MONTH)+1;
+	int td = cal.get(Calendar.DATE);
+	
+	int year = cal.get(Calendar.YEAR);
+	int month = cal.get(Calendar.MONTH)+1;
+	
+	// 파라미터 받기
+	String sy = request.getParameter("year");
+	String sm = request.getParameter("month");
+	
+	if(sy!=null) { // 넘어온 파라미터가 있으면
+		year = Integer.parseInt(sy);
+	}
+	if(sm!=null) {
+		month = Integer.parseInt(sm);
+	}
+	
+	cal.set(year, month-1, 1);
+	year = cal.get(Calendar.YEAR);
+	month = cal.get(Calendar.MONTH)+1;
+	
+	int week = cal.get(Calendar.DAY_OF_WEEK); // 1(일)~7(토)
+%>
+ 
+ 
+ 
+ <!DOCTYPE HTML>
+
 <html>
 	<head>
 		<title>전체일정</title>
@@ -244,32 +257,25 @@
 									<!-- 컨텐츠 내용 -->
 									<div class="performanceCalendar inner">
 										
-								
-										
-									
 					
 										<p class="table-bottom-deco color-reddish-purple mobile-txt">※해당일을 클릭하면 하단에 공연/전시 목록이 표시됩니다.</p>
 					
 										<div class="performanceCalendar__item">
 											<div class="performanceCalendar__info">
-												<a href="calendar.jsp?year=<%=cal.get(Calendar.YEAR)%>&month=<%=((cal.get(Calendar.MONTH)+1)-1)%>">
+											<a href="calendar.jsp?year=<%=year%>&month=<%=month-1%>">
 												<button type="button" class="prev">이전달</button></a>
-												
-											<!-- 년도 ?? -->	
-											<select id="calendarYear">
-													<option value="2022"><%=cal.get(Calendar.YEAR)%>년</option>
-													<option value="2023"><%=cal.get(Calendar.YEAR)+1%>년</option>
-													<option value="2024"><%=cal.get(Calendar.YEAR)+2%>년</option>
+												<select id="calendarYear">
+													<option ><%=year%>년</option>
+													<option ><%=year+1%>년</option>
+													<option ><%=year+2%>년</option>
 												</select>
-										
 												<select id="calendarMonth">
-													<option value="1"><%=(cal.get(Calendar.MONTH)+1)%>월</option>
-													<option value="1"><%=(cal.get(Calendar.MONTH)+1)+1%>월</option>
-													<option value="1"><%=(cal.get(Calendar.MONTH)+1)+2%>월</option>
+													<option value="1"><%=month%></option>
+													<option value="2"><%=month+1%></option>
+													<option value="3"><%=month+2%></option>
 										
-							
 												</select>
-												  <a href='calendar.jsp?year=<%=cal.get(Calendar.YEAR)%>&month=<%=((cal.get(Calendar.MONTH)+1)+1)%>'>
+												<a href="calendar.jsp?year=<%=year%>&month=<%=month+1%>">
 												<button type="button" class="next">다음달</button></a>
 											</div>
 											<!-- ✨ -->
@@ -286,82 +292,62 @@
 													</tr>
 												</thead>
 												<tbody>
-												<%  
- 												cal.set(year, month-1, 1);
- 												int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-												%>
-											<tr>
-											<%
- 														for (int i=1;i<dayOfWeek;i++) {
-															%>
-															<td>&nbsp;</td>
-															<%
-															}
-						
-											String nowYear = Integer.toString(cal.get(Calendar.YEAR));
-											 String nowMonth = Integer.toString(cal.get(Calendar.MONTH)+1).length() == 1 ? "0" + Integer.toString(cal.get(Calendar.MONTH)+1): Integer.toString(cal.get(Calendar.MONTH)+1);
-											 String printStr  = "";
-											 a : for (int i=1; i<= cal.getActualMaximum(Calendar.DAY_OF_MONTH);i++) {
-											  list : for (int g=0; g < list.size(); g++) {
-											   HashMap tempMap = (HashMap)list.get(g);
-											   printStr = Integer.toString(i);
-											   int dataBaseNowDate = Integer.parseInt(tempMap.get("START_DATE").toString());
-											   int dataBaseNextDate = Integer.parseInt(tempMap.get("END_DATE").toString());
-											   String content = tempMap.get("CONTENT").toString();
-											   
-											   String nowDay = Integer.toString(i).length() == 1 ? "0" + Integer.toString(i) : Integer.toString(i);
-											   String nextDay = Integer.toString(i + 1).length() == 1 ? "0" + Integer.toString(i + 1) : Integer.toString(i + 1);
-											   
-											   String nowDate = nowYear + nowMonth + nowDay; //for문을 돌고 있는 지금 날짜
-											   String nextDate = nowYear + nowMonth + nextDay; //for문을 돌고 있는 지금 날짜의 다음날짜 즉 + 1 day   
-											   if (content != null  && Integer.parseInt(nowDate) == dataBaseNowDate ) { //내용이 널이아닌경우는 있다는 증거
-											    if (Integer.parseInt(nowDate) == dataBaseNowDate && Integer.parseInt(nextDate) == dataBaseNextDate) {
-											      //출력하는 날짜들과 데이터베이스에 조회해서 나온날짜들을 비교하여 일치한다면// 아래와같은 형식을 만들어서 뿌려줌~
-											     printStr = printStr + "<div class=\"content\">"  + content + "</div>";
-											     break  list; //for문의 list를 빠져나옴.
-											    }
-											   } else if (content != null  && Integer.parseInt(nowDate) != dataBaseNowDate) { //현재날짜와 데이터베이스의 날짜가 같지않을때
-											    //즉 위의 시작날짜에는 청소를 찍었으나 다음날짜도 찍어여하므로 아래 조건문이 맞아야 청소가 찍힌다.
-											    String preDate = nowYear + nowMonth +  (Integer.toString((i - 1)).length() == 1 ? "0" + Integer.toString((i - 1)) : Integer.toString((i - 1))); //현재날짜의 이전날짜
-											    if (Integer.parseInt(preDate) == dataBaseNowDate && Integer.parseInt(nowDate) == dataBaseNextDate) { 
-											     printStr = printStr + "<div class=\"content\">" + content + "</div>";
-											     break list;
-											    }
-											   }
-											  }
-											%>
-										 <td>
-    								<%=printStr %><ul class="item">
-																<li class="m">
-																<div class="itemLayer">
-   										</td>
-									<%
-     									if ((dayOfWeek-1+i)%7==0) {
-										%>
-							</tr>
-							<tr>
-						<%
-  							}
-   											}
-												%>
+													<tr>
+														<td></td>
+														<td></td>
+														<td></td>
+														<td></td>
 														</tr>
-										
-										
-										
-										
+														
+			<%
+			
+			
+			
+			%>
+														
+														
+	<%
+			// 1일 앞 달
+			Calendar preCal = (Calendar)cal.clone();
+			preCal.add(Calendar.DATE, -(week-1));
+			int preDate = preCal.get(Calendar.DATE);
+			
+			out.print("<tr>");
+			// 1일 앞 부분
+			for(int i=1; i<week; i++) {
+				//out.print("<td>&nbsp;</td>");
+				out.print("<td class='gray'>"+(preDate++)+"</td>");
+			}
+			
+			// 1일부터 말일까지 출력
+			int lastDay = cal.getActualMaximum(Calendar.DATE);
+			String cls;
+			for(int i=1; i<=lastDay; i++) {
+				cls = year==ty && month==tm && i==td ? "today":"";
+				
+				out.print("<td class='"+cls+"'>"+i+"</td>");
+				if(lastDay != i && (++week)%7 == 1) {
+					out.print("</tr><tr>");
+				}
+			}
+			
+			// 마지막 주 마지막 일자 다음 처리
+			int n = 1;
+			for(int i = (week-1)%7; i<6; i++) {
+				// out.print("<td>&nbsp;</td>");
+				out.print("<td class='gray'>"+(n++)+"</td>");
+			}
+			out.print("</tr>");
+%>		
+														
+														
+														
+														
+														
+														
 															
-								<td>	
-								
-															<ul class="item">
-																<li class="m">
-																	<a href="page2.html">2022 '적벽'</a>
-																	<div class="itemLayer">
-													
-								</td>				
-													
-													
-													
-													<!-- 	<td>
+	<!-- 										
+														<td>
 															<p class="day">1</p>
 															<ul class="item">
 																<li class="m">
@@ -380,18 +366,701 @@
 																</li>
 																<li class="s"></li>
 															</ul>
-														</td> -->
-														
-														
-														
-														
-														
-														
-														
-														
-														
-														
-														
+														</td>
+														<td>
+															<p class="day">2</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">3</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<p class="day">4</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">5</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">6</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">7</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">8</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">9</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">10</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<p class="day">11</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">12</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">13</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">14</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">15</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">16</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">17</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<p class="day">18</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">19</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">20</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">21</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">22</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">23</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">24</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<p class="day">25</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">26</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">27</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">28</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">29</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">30</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">31</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<p class="day">4</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">5</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">6</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">7</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">8</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+														<td>
+															<p class="day">9</p>
+															<ul class="item">
+																<li class="m">
+																	<a href=" ">2022 '적벽'</a>
+																	<div class="itemLayer">
+
+																	</div>
+-->
+																</li>
+																<li class="ch">
+																	<a href="">EOS 콰르텟 제 2회 정기연주회</a>
+																	<div class="itemLayer_wap">
+																		<div class="itemLayer_img"></div>
+																		<div class="itemLayer_cont"></div>
+																	</div>
+																</li>
+															</ul>
+														</td>
 														<td></td>
 														<form name="dataFrm" id="dataFrm" action=""></form>
 														<input type="hidden" id="searchYear" value="2022">
@@ -402,7 +1071,7 @@
 												</tbody>
 												<script></script>
 											</table>
-											<!-- ✨ -->
+											✨
 										</div>
 					
 										<ul class="performanceCalendar__list"></ul>
@@ -413,7 +1082,7 @@
 								</div>
 							</div>
 					
-						</div><!-- #cont -->
+						</div>#cont
 
 			
 

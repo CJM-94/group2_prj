@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ko.co.sist.vo.ScheduleShowVO;
+import kr.co.sist.vo.ScheduleShowVO;
 import kr.co.sist.common.dao.DbConnection;
 
 
@@ -32,6 +32,7 @@ public class ScheduleDAO {
 	
 	public List<ScheduleShowVO> selectSchedule(String showId) throws SQLException{
 		List<ScheduleShowVO> list = new ArrayList<ScheduleShowVO>();
+	
 		
 		Connection con=null;
 		PreparedStatement pstmt=null;
@@ -41,20 +42,26 @@ public class ScheduleDAO {
 		
 		try {
 			con=db.getConn();
-			String query="select showId, name, startDate, endDate "
-							+"from show "
-							+"where name is not null "
-							+"and startDate = to_date(startDate, 'YYYY-MM-DD')";
+			StringBuilder selectShow = new StringBuilder();
+			
+			selectShow.append(" select showId, name, startDate, endDate ").append(" from show ")
+							.append(" where name is not null");
+			
+			/*
+			 * String query="select showId, name, startDate, endDate " +"from show "
+			 * +"where name is not null "
+			 * +"and startDate = to_date(startDate, 'YYYY-MM-DD')";
+			 */
 			
 		
-			pstmt = con.prepareStatement(query);
+			pstmt = con.prepareStatement(selectShow.toString());
 			
 			rs = pstmt.executeQuery();
 			
-			ScheduleShowVO ssVO= null;
+		
+			ScheduleShowVO ssVO = null;
 			while(rs.next()) {
-				
-				ssVO.setShowId(rs.getString("showId"));
+				ssVO = new ScheduleShowVO();
 				ssVO.setName(rs.getString("name"));
 				ssVO.setStartDate(rs.getString("startDate"));
 				ssVO.setEndDate(rs.getString("endDate"));
@@ -67,11 +74,11 @@ public class ScheduleDAO {
 	
 		return list;
 
-	}//select
+	}
 	
 	
 	
-
+	
 	
 	
 	

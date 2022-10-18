@@ -61,10 +61,10 @@ System.out.println(  aschDAO.selectScheduleDetail(schId) );
       //변경      
         	$("#modifyBtn").click(function() {
         		if(confirm("상영일정을 변경하시겠습니까?")){
-        		}
         		alert("상영일정을 변경 완료하였습니다.");
         			$("#frm").submit();
         		
+        		}
         			return;
         		
         		
@@ -87,7 +87,7 @@ System.out.println(  aschDAO.selectScheduleDetail(schId) );
                                     
                                        <!-- **update form 태그 위치**  -->
                                        
-                                       <form action="schedule_update.jsp?schId=<%=schData.getSchId() %>" method="post" id="frm"  name="frm">
+                                       <form action="schedule_update.jsp" method="post" id="frm"  name="frm">
                                         <div class="dataTable-top"></div>
                                         <div class="row">
                                             <div class="col-4"><img id="thImgPreview" src="img/<%=schData.getThImg() %>" class="img-thumbnail" alt="썸네일이미지"></div>
